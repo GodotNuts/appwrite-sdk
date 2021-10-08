@@ -4,8 +4,13 @@ extends Reference
 signal completed(task)
 
 enum Task {
+    GET,
     CREATE,
-    CREATE_SESSION
+    GET_SESSION,
+    GET_SESSIONS,
+    CREATE_SESSION,
+    GET_PREFS,
+    GET_LOGS,
 }
 
 var _code : int
@@ -48,6 +53,10 @@ func push_request(httprequest : HTTPRequest) -> void:
 func _on_task_completed(result : int, response_code : int, headers : PoolStringArray, body : PoolByteArray) -> void:
     var result_body : Dictionary = JSON.parse(body.get_string_from_utf8()).result if body.get_string_from_utf8() else {}
     match response_code:
+        200:
+            match _code:
+                _:
+                    complete(result_body, {})
         201:
             match _code:
                 Task.CREATE:
@@ -67,8 +76,9 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
 
 func get_auth_cookie(cookies : PoolStringArray) -> void:
     for cookie in cookies:
-        if cookie.begins_with("X-Fallback-Cookies:"):
+        if cookie.begins_with("X-Fallback-Cookies:" ):
             self.cookies.append(parse_json(cookie.lstrip("X-Fallback-Cookies: ")))
+            return
 
 func complete(_response : Dictionary = {}, _error : Dictionary = {}) -> void:
     response = _response
