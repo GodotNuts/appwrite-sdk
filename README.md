@@ -1,4 +1,4 @@
-<p align="center"><img src="addons/appwrite/icon.svg" width="80px"/></p>
+<p align="center"><img src="addons/appwrite-sdk/icon.svg" width="80px"/></p>
 
 # Godot Engine - Appwrite SDK (client+server)
 A lightweight addon which integrates Appwrite APIs for Godot Engine out of the box.  
