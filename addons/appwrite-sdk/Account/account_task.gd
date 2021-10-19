@@ -53,7 +53,9 @@ func _init(code : int, endpoint : String, headers : PoolStringArray, payload : D
 
 func match_code(code : int) -> int:
     match code:
-        Task.UPDATE_MAGIC_LINK, Task.UPDATE_NAME, Task.UPDATE_EMAIL, Task.UPDATE_PASSWORD, Task.UPDATE_PREFS, Task.UPDATE_PWD_RECOVERY, Task.UPDATE_EMAIL_CONFIRMATION:
+        Task.UPDATE_NAME, Task.UPDATE_EMAIL, Task.UPDATE_PASSWORD, Task.UPDATE_PREFS:
+            return HTTPClient.METHOD_PATCH
+        Task.UPDATE_MAGIC_LINK,  Task.UPDATE_PWD_RECOVERY, Task.UPDATE_EMAIL_CONFIRMATION:
             return HTTPClient.METHOD_PUT
         Task.CREATE, Task.CREATE_SESSION, Task.CREATE_SESSION_OAUTH2, Task.CREATE_ANONYMOUS_SESSION, Task.CREATE_MAGIC_LINK, Task.CREATE_PWD_RECOVERY, Task.CREATE_EMAIL_CONFIRMATION:
             return HTTPClient.METHOD_POST
