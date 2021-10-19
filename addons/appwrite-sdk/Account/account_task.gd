@@ -4,6 +4,7 @@ extends Reference
 signal completed(task)
 
 enum Task {
+    # Client
     GET,
     CREATE,
     DELETE,
