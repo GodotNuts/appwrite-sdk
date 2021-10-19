@@ -115,7 +115,7 @@ func create_recovery(email: String, url: String) -> AccountTask:
     return _post(AccountTask.Task.CREATE_PWD_RECOVERY, payload)
 
 func update_recovery(user_id: String, secret: String, password: String, password_again: String) -> AccountTask:
-    return __post(AccountTask.Task.UPDATE_RECOVERY, { userId = user_id, secret = secret, password = password, passwordAgain = password_again })
+    return __post(AccountTask.Task.UPDATE_PWD_RECOVERY, { userId = user_id, secret = secret, password = password, passwordAgain = password_again })
 
 func get_session(session_id: String) -> AccountTask:
     return __get(AccountTask.Task.GET_SESSION, session_id)
