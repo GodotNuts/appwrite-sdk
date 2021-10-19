@@ -123,8 +123,7 @@ func get_sessions() -> AccountTask:
     return __get(AccountTask.Task.GET_SESSIONS)
 
 func create_session(email: String, password: String) -> AccountTask:
-    var payload : Dictionary = { "email":email, "password":password }
-    return __post(AccountTask.Task.CREATE_SESSION, payload)
+    return __post(AccountTask.Task.CREATE_SESSION, { email = email, password = password })
 
 func delete_session(session_id: String) -> AccountTask:
     return __get(AccountTask.Task.DELETE_SESSION, session_id)
