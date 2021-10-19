@@ -1,6 +1,8 @@
 class_name AppwriteAccount
 extends Node
 
+const _REST_BASE: String = "/account"
+
 class Providers:
     const APPLE := "apple"
     const BITBUCKET := "bitbucket"
@@ -34,21 +36,21 @@ func _ready():
 func __match_resource(type: int, param: String = "") -> String:
     var resource : String = ""
     match type:
-        AccountTask.Task.GET, AccountTask.Task.CREATE, AccountTask.Task.DELETE: resource = "/account"
-        AccountTask.Task.GET_SESSIONS: resource = "/account/sessions"
-        AccountTask.Task.CREATE_SESSION_OAUTH2: resource = "/account/sessions/oauth2/"+param
-        AccountTask.Task.CREATE_MAGIC_URL, AccountTask.Task.UPDATE_MAGIC_URL: resource = "/account/sessions/magic-url"
-        AccountTask.Task.CREATE_ANONYMOUS_SESSION: resource = "/account/sessions/anonymous"
-        AccountTask.Task.CREATE_JWT: resource = "/account/jwt"
-        AccountTask.Task.GET_LOGS: resource = "/account/logs"
-        AccountTask.Task.GET_SESSION, AccountTask.Task.DELETE_SESSION: resource = "/account/sessions/"+param
-        AccountTask.Task.UPDATE_NAME: resource = "/account/name"
-        AccountTask.Task.UPDATE_PASSWORD: resource = "/account/password"
-        AccountTask.Task.UPDATE_EMAIL: resource = "/account/email"
-        AccountTask.Task.UPDATE_PREFS, AccountTask.Task.GET_PREFS: resource = "/account/prefs"
-        AccountTask.Task.GET_SESSIONS, AccountTask.Task.DELETE_SESSIONS: resource = "/account/sessions"
-        AccountTask.Task.CREATE_PWD_RECOVERY, AccountTask.Task.UPDATE_PWD_RECOVERY: resource = "/account/recovery"
-        AccountTask.Task.CREATE_EMAIL_VERIFICATION, AccountTask.Task.UPDATE_EMAIL_VERIFICATION: resource = "/account/verification"
+        AccountTask.Task.GET, AccountTask.Task.CREATE, AccountTask.Task.DELETE: resource = _REST_BASE
+        AccountTask.Task.GET_SESSIONS: resource = _REST_BASE+"/sessions"
+        AccountTask.Task.CREATE_SESSION_OAUTH2: resource = _REST_BASE+"/sessions/oauth2/"+param
+        AccountTask.Task.CREATE_MAGIC_URL, AccountTask.Task.UPDATE_MAGIC_URL: resource = _REST_BASE+"/sessions/magic-url"
+        AccountTask.Task.CREATE_ANONYMOUS_SESSION: resource = _REST_BASE+"/sessions/anonymous"
+        AccountTask.Task.CREATE_JWT: resource = _REST_BASE+"/jwt"
+        AccountTask.Task.GET_LOGS: resource = _REST_BASE+"/logs"
+        AccountTask.Task.GET_SESSION, AccountTask.Task.DELETE_SESSION: resource = _REST_BASE+"/sessions/"+param
+        AccountTask.Task.UPDATE_NAME: resource = _REST_BASE+"/name"
+        AccountTask.Task.UPDATE_PASSWORD: resource = _REST_BASE+"/password"
+        AccountTask.Task.UPDATE_EMAIL: resource = _REST_BASE+"/email"
+        AccountTask.Task.UPDATE_PREFS, AccountTask.Task.GET_PREFS: resource = _REST_BASE+"/prefs"
+        AccountTask.Task.GET_SESSIONS, AccountTask.Task.DELETE_SESSIONS: resource = _REST_BASE+"/sessions"
+        AccountTask.Task.CREATE_PWD_RECOVERY, AccountTask.Task.UPDATE_PWD_RECOVERY: resource = _REST_BASE+"/recovery"
+        AccountTask.Task.CREATE_EMAIL_VERIFICATION, AccountTask.Task.UPDATE_EMAIL_VERIFICATION: resource = _REST_BASE+"/verification"
     return resource
 
 
