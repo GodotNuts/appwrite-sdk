@@ -31,7 +31,7 @@ func _ready():
 
 
 # function builder
-func __match_resource(type : int, param: String = "") -> String:
+func __match_resource(type: int, param: String = "") -> String:
     var resource : String = ""
     match type:
         AccountTask.Task.GET: resource = "/account"
@@ -39,8 +39,20 @@ func __match_resource(type : int, param: String = "") -> String:
         AccountTask.Task.GET_SESSIONS: resource = "/account/sessions"
         AccountTask.Task.GET_LOGS: resource = "/account/logs"
         AccountTask.Task.GET_SESSION: resource = "/account/sessions/"+param
+        AccountTask.Task.CREATE: resource = "/account"
     return resource
 
+
+# POST base function
+func __post(type: int, payload: Dictionary = {}) -> AccountTask:
+    var account_task : AccountTask = AccountTask.new(
+        type,
+        get_parent().endpoint + __match_resource(type), 
+        get_parent()._get_headers(),
+        payload
+        )
+    _process_task(account_task)
+    return account_task
 
 # GET base function
 func __get(type : int, param: String = "") -> AccountTask:
@@ -63,14 +75,7 @@ func get_logged() -> AccountTask :
 func create(email: String, password: String, _name: String = "") -> AccountTask:
     var payload : Dictionary = { "email":email, "password":password }
     if _name != "" : payload["name"] = _name
-    var account_task : AccountTask = AccountTask.new(
-        AccountTask.Task.CREATE,
-        get_parent().endpoint + "/account", 
-        get_parent()._get_headers(),
-        payload
-        )
-    _process_task(account_task)
-    return account_task
+    return __post(AccountTask.Task.CREATE, payload)
 
 func delete() -> AccountTask:
     return null
