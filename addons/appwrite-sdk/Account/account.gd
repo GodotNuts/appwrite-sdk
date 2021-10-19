@@ -37,7 +37,7 @@ func __match_resource(type: int, param: String = "") -> String:
     var resource : String = ""
     match type:
         AccountTask.Task.GET, AccountTask.Task.CREATE, AccountTask.Task.DELETE: resource = _REST_BASE
-        AccountTask.Task.GET_SESSIONS: resource = _REST_BASE+"/sessions"
+        AccountTask.Task.GET_SESSIONS, AccountTask.Task.CREATE_SESSION: resource = _REST_BASE+"/sessions"
         AccountTask.Task.CREATE_SESSION_OAUTH2: resource = _REST_BASE+"/sessions/oauth2/"+param
         AccountTask.Task.CREATE_MAGIC_URL, AccountTask.Task.UPDATE_MAGIC_URL: resource = _REST_BASE+"/sessions/magic-url"
         AccountTask.Task.CREATE_ANONYMOUS_SESSION: resource = _REST_BASE+"/sessions/anonymous"
@@ -54,16 +54,7 @@ func __match_resource(type: int, param: String = "") -> String:
     return resource
 
 
-# POST base function
-func __post(type: int, payload: Dictionary = {}) -> AccountTask:
-    var account_task : AccountTask = AccountTask.new(
-        type,
-        get_parent().endpoint + __match_resource(type), 
-        get_parent()._get_headers(),
-        payload
-        )
-    _process_task(account_task)
-    return account_task
+
 
 # GET base function
 func __get(type : int, param: String = "") -> AccountTask:
@@ -75,8 +66,26 @@ func __get(type : int, param: String = "") -> AccountTask:
     _process_task(account_task)
     return account_task 
 
+# POST base function
+func __post(type: int, payload: Dictionary = {}) -> AccountTask:
+    var account_task : AccountTask = AccountTask.new(
+        type,
+        get_parent().endpoint + __match_resource(type), 
+        get_parent()._get_headers(),
+        payload
+        )
+    _process_task(account_task)
+    return account_task
 
-
+# DELETE base function
+func __delete(type: int, param: String = "") -> AccountTask:
+    var account_task : AccountTask = AccountTask.new(
+        type,
+        get_parent().endpoint + __match_resource(type, param), 
+        get_parent()._get_headers()
+    )
+    _process_task(account_task)
+    return account_task
 
 # -------- CLIENT API
 
