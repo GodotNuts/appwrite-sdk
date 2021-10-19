@@ -111,8 +111,7 @@ func update_prefs(prefs: Dictionary) -> AccountTask:
     return __post(AccountTask.Task.UPDATE_PREFS, prefs)
 
 func create_recovery(email: String, url: String) -> AccountTask:
-    var payload: Dictionary = { email = email, url = url }
-    return _post(AccountTask.Task.CREATE_PWD_RECOVERY, payload)
+    return _post(AccountTask.Task.CREATE_PWD_RECOVERY, { email = email, url = url })
 
 func update_recovery(user_id: String, secret: String, password: String, password_again: String) -> AccountTask:
     return __post(AccountTask.Task.UPDATE_PWD_RECOVERY, { userId = user_id, secret = secret, password = password, passwordAgain = password_again })
@@ -154,11 +153,11 @@ func create_oauth2_session(provider: String, success: String = "", failure: Stri
     if not scopes.empty(): endpoint+="&scopes="+scopes.join(",")
     return __get(AccountTask.Task.CREATE_SESSION_OAUTH2, endpoint)
 
-func create_verification() -> AccountTask:
-    return null
+func create_verification(url: String) -> AccountTask:
+    return __post(AccountTask.Task.CREATE_EMAIL_VERIFICATION, { url = url })
 
-func update_verification() -> AccountTask:
-    return null
+func update_verification(user_id: String, secret: String) -> AccountTask:
+    return __post(AccountTask.Task.UPDATE_EMAIL_VERIFICATION, { userId = user_id, secret = secret })
 
 
 
