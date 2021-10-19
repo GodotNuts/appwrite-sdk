@@ -53,6 +53,8 @@ func _init(code : int, endpoint : String, headers : PoolStringArray, payload : D
 
 func match_code(code : int) -> int:
     match code:
+        Task.DELETE, Task.DELETE_SESSION, Task.DELETE_SESSIONS:
+            return HTTPClient.METHOD_DELETE
         Task.UPDATE_NAME, Task.UPDATE_EMAIL, Task.UPDATE_PASSWORD, Task.UPDATE_PREFS:
             return HTTPClient.METHOD_PATCH
         Task.UPDATE_MAGIC_LINK,  Task.UPDATE_PWD_RECOVERY, Task.UPDATE_EMAIL_CONFIRMATION:
@@ -77,13 +79,9 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
                     complete(result_body, {})
         201:
             match _code:
-                Task.CREATE:
-                    complete(result_body, {})
                 Task.CREATE_SESSION:
                     get_auth_cookie(headers)
-                    complete(result_body, {})
-                _:
-                    complete()
+            complete(result_body, {})
         0, 204:
             match _code:
                 Task.LOGOUT, Task.USER:
