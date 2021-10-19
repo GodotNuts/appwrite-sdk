@@ -5,6 +5,7 @@ const _REST_BASE: String = "/account"
 
 class Providers:
     const APPLE := "apple"
+    const AMAZON := "amazon"
     const BITBUCKET := "bitbucket"
     const DISCORD := "discord"
     const FACEBOOK := "facebook"
@@ -56,7 +57,7 @@ func __match_resource(type: int, param: String = "") -> String:
 
 
 
-# GET base function
+# GET, DELETE base function
 func __get(type : int, param: String = "") -> AccountTask:
     var account_task : AccountTask = AccountTask.new(
         type,
@@ -66,7 +67,7 @@ func __get(type : int, param: String = "") -> AccountTask:
     _process_task(account_task)
     return account_task 
 
-# POST base function
+# POST, PUT, PATCH base function
 func __post(type: int, payload: Dictionary = {}) -> AccountTask:
     var account_task : AccountTask = AccountTask.new(
         type,
@@ -77,15 +78,6 @@ func __post(type: int, payload: Dictionary = {}) -> AccountTask:
     _process_task(account_task)
     return account_task
 
-# DELETE base function
-func __delete(type: int, param: String = "") -> AccountTask:
-    var account_task : AccountTask = AccountTask.new(
-        type,
-        get_parent().endpoint + __match_resource(type, param), 
-        get_parent()._get_headers()
-    )
-    _process_task(account_task)
-    return account_task
 
 # -------- CLIENT API
 
@@ -98,63 +90,69 @@ func create(email: String, password: String, _name: String = "") -> AccountTask:
     return __post(AccountTask.Task.CREATE, payload)
 
 func delete() -> AccountTask:
-    return null
-
-func update_email() -> AccountTask:
-    return null
-
-func create_jwt() -> AccountTask:
-    return null
+    return __get(AccountTask.Task.DELETE)
 
 func get_logs() -> AccountTask:
     return __get(AccountTask.Task.GET_LOGS)
 
-func update_name() -> AccountTask:
-    return null
+func update_name(name: String) -> AccountTask:
+    return __post(AccountTask.Task.UPDATE_NAME, { name = name })
 
-func update_password() -> AccountTask:
-    return null
+func update_password(password: String, old_password: String) -> AccountTask:
+    return __post(AccountTask.Task.UPDATE_PWD, { password = password, oldPassword = old_password })
+
+func update_email(email: String, password: String) -> AccountTask:
+    return __post(AccountTask.Task.UPDATE_EMAIL, { email = email, password = password })
 
 func get_prefs() -> AccountTask:
     return __get(AccountTask.Task.GET_PREFS)
 
-func update_prefs() -> AccountTask:
-    return null
+func update_prefs(prefs: Dictionary) -> AccountTask:
+    return __post(AccountTask.Task.UPDATE_PREFS, prefs)
 
 func create_recovery(email: String, url: String) -> AccountTask:
     var payload: Dictionary = { email = email, url = url }
     return _post(AccountTask.Task.CREATE_PWD_RECOVERY, payload)
 
-func update_recover() -> AccountTask:
-    return null
+func update_recovery(user_id: String, secret: String, password: String, password_again: String) -> AccountTask:
+    return __post(AccountTask.Task.UPDATE_RECOVERY, { userId = user_id, secret = secret, password = password, passwordAgain = password_again })
+
+func get_session(session_id: String) -> AccountTask:
+    return __get(AccountTask.Task.GET_SESSION, session_id)
 
 func get_sessions() -> AccountTask:
     return __get(AccountTask.Task.GET_SESSIONS)
 
 func create_session(email: String, password: String) -> AccountTask:
     var payload : Dictionary = { "email":email, "password":password }
-    return _post(AccountTask.Task.CREATE_SESSION, payload)
+    return __post(AccountTask.Task.CREATE_SESSION, payload)
+
+func delete_session(session_id: String) -> AccountTask:
+    return __get(AccountTask.Task.DELETE_SESSION, session_id)
 
 func delete_sessions() -> AccountTask:
-    return null
+    return __get(AccountTask.Task.DELETE_SESSIONS)
 
 func create_anonymous_session() -> AccountTask:
-    return null
+    return __post(AccountTask.Task.CREATE_ANONYMOUS_SESSION)
 
-func create_magic_url_session() -> AccountTask:
-    return null
+func create_jwt() -> AccountTask:
+    return __post(AccountTask.Task.CREATE_JWT)
 
-func update_magic_url_session() -> AccountTask:
-    return null
+func create_magic_url_session(email: String, url: String = "") -> AccountTask:
+    var payload: Dictionary = { email = email, url = url }
+    return __post(AccountTask.Task.CREATE_MAGIC_URL, payload)
 
-func create_oauth2_session() -> AccountTask:
-    return null
+func update_magic_url_session(user_id: String, secret: String) -> AccountTask:
+    var payload: Dictionary = { userId = user_id, secret = secret }
+    return __post(AccountTask.Task.UPDATE_MAGIC_URL, payload)
 
-func get_session(session_id: String) -> AccountTask:
-    return __get(AccountTask.Task.GET_SESSION, session_id)
-
-func delete_session() -> AccountTask:
-    return null
+func create_oauth2_session(provider: String, success: String = "", failure: String = "", scopes: PoolStringArray = []) -> AccountTask:
+    var endpoint: String = provider
+    if success != "": endpoint+="&success="+success
+    if failure != "": endpoint+="&failure="+failure
+    if not scopes.empty(): endpoint+="&scopes="+scopes.join(",")
+    return __get(AccountTask.Task.CREATE_SESSION_OAUTH2, endpoint)
 
 func create_verification() -> AccountTask:
     return null
