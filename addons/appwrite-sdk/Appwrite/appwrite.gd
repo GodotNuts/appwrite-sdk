@@ -4,6 +4,7 @@ extends Node
 var account : AppwriteAccount
 var database : AppwriteDatabase
 var storage : AppwriteStorage
+var health : AppwriteHealth
 
 
 var endpoint : String = "https://appwrite.io/v1"
@@ -30,9 +31,11 @@ func _ready() -> void:
 func load_modules() -> void:
     account = AppwriteAccount.new()
     database = AppwriteDatabase.new()
+    health = AppwriteHealth.new()
     
     add_child(account)
     add_child(database)
+    add_child(health)
     
     
 
