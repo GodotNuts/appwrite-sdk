@@ -17,7 +17,7 @@ class Providers:
 var _cookies : PoolStringArray = []
 
 signal task_response(task_response)
-
+signal success(response)
 signal got(user)
 signal created(user)
 signal got_prefs(prefs)
@@ -25,6 +25,22 @@ signal got_logs(logs)
 signal got_session(session)
 signal got_sessions(sessions)
 signal session_created(session)
+signal anonymous_session_created(session)
+signal email_confirmation_created()
+signal jwt_created()
+signal magic_link_created()
+signal pwd_recovery_created()
+signal oauth2_session_created(session)
+signal deleted()
+signal session_deleted()
+signal sessions_deleted()
+signal email_updated()
+signal email_confirmation_updated()
+signal magic_link_updated()
+signal name_updated()
+signal password_updated()
+signal prefs_updated()
+signal pwd_recovery_updated()
 
 func _init():
     pass
@@ -40,7 +56,7 @@ func __match_resource(type: int, param: String = "") -> String:
         AccountTask.Task.GET, AccountTask.Task.CREATE, AccountTask.Task.DELETE: resource = _REST_BASE
         AccountTask.Task.GET_SESSIONS, AccountTask.Task.CREATE_SESSION: resource = _REST_BASE+"/sessions"
         AccountTask.Task.CREATE_SESSION_OAUTH2: resource = _REST_BASE+"/sessions/oauth2/"+param
-        AccountTask.Task.CREATE_MAGIC_URL, AccountTask.Task.UPDATE_MAGIC_URL: resource = _REST_BASE+"/sessions/magic-url"
+        AccountTask.Task.CREATE_MAGIC_LINK, AccountTask.Task.UPDATE_MAGIC_LINK: resource = _REST_BASE+"/sessions/magic-url"
         AccountTask.Task.CREATE_ANONYMOUS_SESSION: resource = _REST_BASE+"/sessions/anonymous"
         AccountTask.Task.CREATE_JWT: resource = _REST_BASE+"/jwt"
         AccountTask.Task.GET_LOGS: resource = _REST_BASE+"/logs"
@@ -68,10 +84,10 @@ func __get(type : int, param: String = "") -> AccountTask:
     return account_task 
 
 # POST, PUT, PATCH base function
-func __post(type: int, payload: Dictionary = {}) -> AccountTask:
+func __post(type: int, payload: Dictionary = {}, param: String = "") -> AccountTask:
     var account_task : AccountTask = AccountTask.new(
         type,
-        get_parent().endpoint + __match_resource(type), 
+        get_parent().endpoint + __match_resource(type, param), 
         get_parent()._get_headers(),
         payload
         )
@@ -108,10 +124,10 @@ func get_prefs() -> AccountTask:
     return __get(AccountTask.Task.GET_PREFS)
 
 func update_prefs(prefs: Dictionary) -> AccountTask:
-    return __post(AccountTask.Task.UPDATE_PREFS, prefs)
+    return __post(AccountTask.Task.UPDATE_PREFS, { prefs = prefs })
 
 func create_recovery(email: String, url: String) -> AccountTask:
-    return _post(AccountTask.Task.CREATE_PWD_RECOVERY, { email = email, url = url })
+    return __post(AccountTask.Task.CREATE_PWD_RECOVERY, { email = email, url = url })
 
 func update_recovery(user_id: String, secret: String, password: String, password_again: String) -> AccountTask:
     return __post(AccountTask.Task.UPDATE_PWD_RECOVERY, { userId = user_id, secret = secret, password = password, passwordAgain = password_again })
@@ -166,7 +182,7 @@ func update_verification(user_id: String, secret: String) -> AccountTask:
 
 # Process a specific task
 func _process_task(task : AccountTask, _fake : bool = false) -> void:
-    task.connect("completed", self, "_on_task_completed")
+    task.connect("completed", self, "_on_task_completed", [task])
     if _fake:
         yield(get_tree().create_timer(0.5), "timeout")
         task.complete(task.data, task.error)
@@ -176,7 +192,7 @@ func _process_task(task : AccountTask, _fake : bool = false) -> void:
         task.push_request(httprequest)
 
 
-func _on_task_completed(task : AccountTask) -> void:
+func _on_task_completed(task_response: TaskResponse, task: AccountTask) -> void:
     if task._handler!=null: task._handler.queue_free()
     if task.response != {}:
         var _signal : String = ""
@@ -196,11 +212,45 @@ func _on_task_completed(task : AccountTask) -> void:
             AccountTask.Task.CREATE_SESSION:
                 _fetch_cookies(task)
                 _signal = "session_created"
+            AccountTask.Task.CREATE_ANONYMOUS_SESSION:
+                _fetch_cookies(task)
+                _signal = "anonymous_session_created"
+            AccountTask.Task.CREATE_EMAIL_VERIFICATION:
+                _signal = "email_confirmation_created"
+            AccountTask.Task.CREATE_JWT:
+                _signal = "jwt_created"
+            AccountTask.Task.CREATE_MAGIC_LINK:
+                _signal = "magic_link_created"
+            AccountTask.Task.CREATE_PWD_RECOVERY:
+                _signal = "pwd_recovery_created"
+            AccountTask.Task.CREATE_SESSION_OAUTH2:
+                _signal = "oauth2_session_created"
+            AccountTask.Task.DELETE:
+                _signal = "deleted"
+            AccountTask.Task.DELETE_SESSION:
+                _signal = "session_deleted"
+            AccountTask.Task.DELETE_SESSIONS:
+                _signal = "sessions_deleted"
+            AccountTask.Task.UPDATE_EMAIL:
+                _signal = "email_updated"
+            AccountTask.Task.UPDATE_EMAIL_VERIFICATION:
+                _signal = "email_confirmation_updated"
+            AccountTask.Task.UPDATE_MAGIC_LINK:
+                _signal = "magic_link_updated"
+            AccountTask.Task.UPDATE_NAME:
+                _signal = "name_updated"
+            AccountTask.Task.UPDATE_PASSWORD:
+                _signal = "password_updated"
+            AccountTask.Task.UPDATE_PREFS:
+                _signal = "prefs_updated"
+            AccountTask.Task.UPDATE_PWD_RECOVERY:
+                _signal = "pwd_recovery_updated"
             _:
-                _signal = "task_response"
+                _signal = "success"
         emit_signal(_signal, task.response)
     else:
         emit_signal("error", task.error)
+    emit_signal("task_response", task_response)
 
 
 func _fetch_cookies(task : AccountTask) -> void:

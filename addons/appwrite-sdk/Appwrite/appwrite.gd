@@ -14,7 +14,8 @@ var headers : Dictionary = {
     "Content-Type" : "application/json",
     "Accept-Type" : "application/json",
     "X-Appwrite-project" : "",
-    "X-Appwrite-key" : ""
+    "X-Appwrite-key" : "",
+    "X-Appwrite-JWT" : ""
    }
 var cookies : PoolStringArray = []
 
@@ -49,6 +50,9 @@ func set_key(key : String) -> Node:
     self.headers["X-Appwrite-key"] = key
     return self
 
+func set_jwt(jwt : String) -> Node:
+    self.headers["X-Appwrite-JWT"] = jwt
+    return self
 
 
 func _get_headers() -> PoolStringArray:

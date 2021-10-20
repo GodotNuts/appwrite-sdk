@@ -1,7 +1,7 @@
 class_name AccountTask
 extends Reference
 
-signal completed(task)
+signal completed(task_response)
 
 enum Task {
     # Client
@@ -26,8 +26,8 @@ enum Task {
     UPDATE_PREFS,
     CREATE_PWD_RECOVERY,
     UPDATE_PWD_RECOVERY,
-    CREATE_EMAIL_CONFIRMATION,
-    UPDATE_EMAIL_CONFIRMATION
+    CREATE_EMAIL_VERIFICATION,
+    UPDATE_EMAIL_VERIFICATION
 }
 
 var _code : int
@@ -57,9 +57,9 @@ func match_code(code : int) -> int:
             return HTTPClient.METHOD_DELETE
         Task.UPDATE_NAME, Task.UPDATE_EMAIL, Task.UPDATE_PASSWORD, Task.UPDATE_PREFS:
             return HTTPClient.METHOD_PATCH
-        Task.UPDATE_MAGIC_LINK,  Task.UPDATE_PWD_RECOVERY, Task.UPDATE_EMAIL_CONFIRMATION:
+        Task.UPDATE_MAGIC_LINK,  Task.UPDATE_PWD_RECOVERY, Task.UPDATE_EMAIL_VERIFICATION:
             return HTTPClient.METHOD_PUT
-        Task.CREATE, Task.CREATE_SESSION, Task.CREATE_SESSION_OAUTH2, Task.CREATE_ANONYMOUS_SESSION, Task.CREATE_MAGIC_LINK, Task.CREATE_PWD_RECOVERY, Task.CREATE_EMAIL_CONFIRMATION:
+        Task.CREATE, Task.CREATE_JWT, Task.CREATE_SESSION, Task.CREATE_SESSION_OAUTH2, Task.CREATE_ANONYMOUS_SESSION, Task.CREATE_MAGIC_LINK, Task.CREATE_PWD_RECOVERY, Task.CREATE_EMAIL_VERIFICATION:
             return HTTPClient.METHOD_POST
         _:
             return HTTPClient.METHOD_GET
@@ -79,7 +79,7 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
                     complete(result_body, {})
         201:
             match _code:
-                Task.CREATE_SESSION:
+                Task.CREATE_SESSION, Task.CREATE_ANONYMOUS_SESSION:
                     get_auth_cookie(headers)
             complete(result_body, {})
         0, 204:
@@ -99,6 +99,6 @@ func get_auth_cookie(cookies : PoolStringArray) -> void:
 func complete(_response : Dictionary = {}, _error : Dictionary = {}) -> void:
     response = _response
     error = _error
-    emit_signal("completed", self)
+    emit_signal("completed", TaskResponse.new(response, error, cookies))
 
         

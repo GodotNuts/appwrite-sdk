@@ -1,5 +1,6 @@
 # Project specific files
-.env
+addons/*
+!addons/appwrite-sdk
 export/
 scn/
 project.godot

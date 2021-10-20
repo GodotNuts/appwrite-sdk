@@ -1,10 +1,21 @@
 class_name DatabaseTask
 extends Reference
 
-signal completed(task)
+signal completed(task_response)
 
 enum Task {
-    CREATE
+    # Server
+    CREATE_COLLECTION,
+    LIST_COLLECTIONS,
+    GET_COLLECTION,
+    UPDATE_COLLECTION,
+    DELETE_COLLECTION,
+    # Client
+    CREATE_DOCUMENT,
+    LIST_DOCUMENTS,
+    GET_DOCUMENT,
+    UPDATE_DOCUMENT,
+    DELETE_DOCUMENT
 }
 
 var _code : int
@@ -20,7 +31,7 @@ var error : Dictionary
 
 var _handler : HTTPRequest
 
-func _init(code : int, endpoint : String, headers : PoolStringArray,  payload : Dictionary):
+func _init(code : int, endpoint : String, headers : PoolStringArray,  payload : Dictionary = {}):
     _code = code
     _endpoint = endpoint
     _headers = headers
@@ -30,8 +41,14 @@ func _init(code : int, endpoint : String, headers : PoolStringArray,  payload : 
 
 func match_code(code : int) -> int:
     match code:
-        Task.CREATE:
+        Task.CREATE_COLLECTION, Task.CREATE_DOCUMENT:
             return HTTPClient.METHOD_POST
+        Task.DELETE_COLLECTION, Task.DELETE_DOCUMENT:
+            return HTTPClient.METHOD_DELETE
+        Task.UPDATE_COLLECTION: 
+            return HTTPClient.METHOD_PUT
+        Task.UPDATE_DOCUMENT:
+            return HTTPClient.METHOD_PATCH
         _: return HTTPClient.METHOD_GET
 
 func push_request(httprequest : HTTPRequest) -> void:
@@ -50,4 +67,4 @@ func complete(_result: Dictionary,  _error : Dictionary = {}) -> void:
     response = _result
     error = _error
     if _handler : _handler.queue_free()
-    emit_signal("completed", self)
+    emit_signal("completed", TaskResponse.new(response, error))
