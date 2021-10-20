@@ -4,6 +4,7 @@ extends Node
 var account : AppwriteAccount
 var database : AppwriteDatabase
 var storage : AppwriteStorage
+var health : AppwriteHealth
 
 
 var endpoint : String = "https://appwrite.io/v1"
@@ -14,7 +15,8 @@ var headers : Dictionary = {
     "Content-Type" : "application/json",
     "Accept-Type" : "application/json",
     "X-Appwrite-project" : "",
-    "X-Appwrite-key" : ""
+    "X-Appwrite-key" : "",
+    "X-Appwrite-JWT" : ""
    }
 var cookies : PoolStringArray = []
 
@@ -29,9 +31,11 @@ func _ready() -> void:
 func load_modules() -> void:
     account = AppwriteAccount.new()
     database = AppwriteDatabase.new()
+    health = AppwriteHealth.new()
     
     add_child(account)
     add_child(database)
+    add_child(health)
     
     
 
@@ -49,6 +53,9 @@ func set_key(key : String) -> Node:
     self.headers["X-Appwrite-key"] = key
     return self
 
+func set_jwt(jwt : String) -> Node:
+    self.headers["X-Appwrite-JWT"] = jwt
+    return self
 
 
 func _get_headers() -> PoolStringArray:

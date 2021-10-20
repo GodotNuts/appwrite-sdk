@@ -1,28 +1,28 @@
-class_name DatabaseTask
+class_name HealthTask
 extends Reference
 
 signal completed(task_response)
 
 enum Task {
     # Server
-    CREATE_COLLECTION,
-    LIST_COLLECTIONS,
-    GET_COLLECTION,
-    UPDATE_COLLECTION,
-    DELETE_COLLECTION,
-    # Client
-    CREATE_DOCUMENT,
-    LIST_DOCUMENTS,
-    GET_DOCUMENT,
-    UPDATE_DOCUMENT,
-    DELETE_DOCUMENT
+    HTTP,
+    DB,
+    CACHE,
+    TIME,
+    WEBHOOKS_QUEUE,
+    TASKS_QUEUE,
+    LOGS_QUEUE,
+    USAGE_QUEUE,
+    CERTIFICATES_QUEUE,
+    FUNCTIONS_QUEUE,
+    LOCAL_STORAGE,
+    ANTIVIRUS
 }
 
 var _code : int
 var _method : int
 var _endpoint : String
 var _headers : PoolStringArray
-var _payload : Dictionary
 
 # EXPOSED VARIABLES ---------------------------------------------------------
 var response : Dictionary
@@ -31,30 +31,21 @@ var error : Dictionary
 
 var _handler : HTTPRequest
 
-func _init(code : int, endpoint : String, headers : PoolStringArray,  payload : Dictionary = {}):
+func _init(code : int, endpoint : String, headers : PoolStringArray):
     _code = code
     _endpoint = endpoint
     _headers = headers
-    _payload = payload
     _method = match_code(code)
 
 
 func match_code(code : int) -> int:
     match code:
-        Task.CREATE_COLLECTION, Task.CREATE_DOCUMENT:
-            return HTTPClient.METHOD_POST
-        Task.DELETE_COLLECTION, Task.DELETE_DOCUMENT:
-            return HTTPClient.METHOD_DELETE
-        Task.UPDATE_COLLECTION: 
-            return HTTPClient.METHOD_PUT
-        Task.UPDATE_DOCUMENT:
-            return HTTPClient.METHOD_PATCH
         _: return HTTPClient.METHOD_GET
 
 func push_request(httprequest : HTTPRequest) -> void:
     _handler = httprequest
     httprequest.connect("request_completed", self, "_on_task_completed")
-    httprequest.request(_endpoint, _headers, true, _method, to_json(_payload))
+    httprequest.request(_endpoint, _headers, true, _method)
 
 func _on_task_completed(result : int, response_code : int, headers : PoolStringArray, body : PoolByteArray) -> void:
     var result_body = JSON.parse(body.get_string_from_utf8()).result if body.get_string_from_utf8() else {}

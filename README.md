@@ -3,18 +3,14 @@
 # Godot Engine - Appwrite SDK (client+server)
 A lightweight addon which integrates Appwrite APIs for Godot Engine out of the box.  
 
-- [ ] Account 
-- - [ ] client
-- - [ ] server
+- [X] Account (client/server)
 - [ ] Users 
 - - [ ] client
 - - [ ] server
 - [ ] Teams 
 - - [ ] client
 - - [ ] server
-- [ ] Database 
-- - [ ] client
-- - [ ] server
+- [X] Database (client/server)
 - [ ] Storage  
 - - [ ] client
 - - [ ] server
@@ -27,9 +23,7 @@ A lightweight addon which integrates Appwrite APIs for Godot Engine out of the b
 - [ ] Avatars 
 - - [ ] client
 - - [ ] server
-- [ ] Health 
-- - [ ] client
-- - [ ] server
+- [X] Health (server)
 - [ ] Realtime 
 - - [ ] client
 - - [ ] server
