@@ -123,8 +123,7 @@ func _on_task_completed(task_response: TaskResponse, task: HealthTask) -> void:
             HealthTask.Task.FUNCTIONS_QUEUE: _signal = "got_functions_queue"
             HealthTask.Task.LOCAL_STORAGE: _signal = "got_local_storage"
             HealthTask.Task.ANTIVIRUS: _signal = "got_antivirus"
-            _:
-                _signal = "success"
+            _: _signal = "success"
         emit_signal(_signal, task.response)
     else:
         emit_signal("error", task.error)

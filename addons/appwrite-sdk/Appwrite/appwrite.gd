@@ -2,6 +2,7 @@ extends Node
 
 # Modules
 var account : AppwriteAccount
+var users : AppwriteUsers
 var database : AppwriteDatabase
 var storage : AppwriteStorage
 var health : AppwriteHealth
@@ -30,11 +31,16 @@ func _ready() -> void:
 
 func load_modules() -> void:
     account = AppwriteAccount.new()
+    users = AppwriteUsers.new()
     database = AppwriteDatabase.new()
+    storage = AppwriteStorage.new()
     health = AppwriteHealth.new()
     
+    
     add_child(account)
+    add_child(users)
     add_child(database)
+    add_child(storage)
     add_child(health)
     
     
@@ -52,6 +58,9 @@ func set_project(project : String) -> Node:
 func set_key(key : String) -> Node:
     self.headers["X-Appwrite-key"] = key
     return self
+
+func get_key() -> String:
+    return self.headers["X-Appwrite-key"]
 
 func set_jwt(jwt : String) -> Node:
     self.headers["X-Appwrite-JWT"] = jwt
