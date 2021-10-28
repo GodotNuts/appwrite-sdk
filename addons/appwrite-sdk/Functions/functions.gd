@@ -11,6 +11,17 @@ signal created_execution(execution)
 signal listed_executions(executions)
 signal got_execution(execution)
 
+signal created(function)
+signal listed(functions)
+signal got(function)
+signal updated(function)
+signal deleted(function)
+signal updated_tag(tag)
+signal created_tag(tag)
+signal listed_tags(tags)
+signal got_tag(tag)
+signal deleted_tag(tag)
+
 
 func _init():
     pass
@@ -99,19 +110,19 @@ func delete(function_id: String) -> FunctionTask:
 function create_tag(function_id: String, command: String, code_path: String) -> FunctionTask:
 	return __post(FunctionTask.Task.CREATE_TAG, { command = command, code = code_path }, { function_id = function_id })
 
-func list_tags(function_id: String, search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionTask:
+func list_tags(function_id: String, search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionsTask:
     var query: String = ""
     if search!="": query+="search="+search
     if limit!=0: query+="&limit="+str(limit)
     if offset!=0: query+="&offset="+str(offset)
     if order_by!="": query+="&orderBy="+order_by
-    return __get(FunctionTask.Task.LIST_TAGS, {function_id = function_id, query = query})
+    return __get(FunctionsTask.Task.LIST_TAGS, {function_id = function_id, query = query})
 
-func get_tag(function_id: String, tag_id: String) -> FunctionTask:
-	return __get(FunctionTask.Task.GET_TAG, { function_id = function_id, tag_id = tag_id })
+func get_tag(function_id: String, tag_id: String) -> FunctionsTask:
+	return __get(FunctionsTask.Task.GET_TAG, { function_id = function_id, tag_id = tag_id })
 
-func delete_tag(function_id: String, tag_id: String) -> FunctionTask:
-	return __get(FunctionTask.Task.DELETE_TAG, { function_id = function_id, tag_id = tag_id })
+func delete_tag(function_id: String, tag_id: String) -> FunctionsTask:
+	return __get(FunctionsTask.Task.DELETE_TAG, { function_id = function_id, tag_id = tag_id })
 
 
 # Process a specific task
@@ -131,9 +142,21 @@ func _on_task_completed(task_response: TaskResponse, task: FunctionsTask) -> voi
     if task.response != {}:
         var _signal : String = ""
         match task._code:
-            FunctionsTask.Task.CREATE_EXECUTION: _signal = "created_execution"
+            # Client
+			FunctionsTask.Task.CREATE_EXECUTION: _signal = "created_execution"
             FunctionsTask.Task.LIST_EXECUTIONS: _signal = "listed_executions"
             FunctionsTask.Task.GET_EXECUTION: _signal = "got_execution"
+			# Server
+			FunctionsTask.Task.CREATE: _signal = "created"
+			FunctionTask.Task.LIST: _signal = "listed"
+			FunctionTask.Task.GET: _signal = "got"
+			FunctionTask.Task.UPDATE: _signal = "updated"
+			FunctionTask.Task.UPDATE_TAG: _signal = "tag_updated"
+			FunctionTask.Task.DELETE: _signal = "deleted"
+			FunctionTask.Task.CREATE_TAG: _signal = "created_tag"
+			FunctionTask.Task.LIST_TAGS: _signal = "listed_tags"
+			FunctionTask.Task.GET_TAG: _signal = "got_tag"
+			FunctionTask.Task.DELETE_TAG: _signal = "deleted_tag"
             _: _signal = "success"
         emit_signal(_signal, task.response)
     else:
