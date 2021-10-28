@@ -4,14 +4,14 @@ extends Reference
 signal completed(task_response)
 
 enum Task {
-    # Server
+    # Client/Server
     GET,
-	GET_COUNTRIES,
-	GET_COUNTRIES_EU,
-	GET_COUTNRIES_PHONES,
-	GET_CONTINENTS,
-	GET_LANGUAGES,
-	GET_CURRENCIES
+    GET_COUNTRIES,
+    GET_COUNTRIES_EU,
+    GET_COUTNRIES_PHONES,
+    GET_CONTINENTS,
+    GET_LANGUAGES,
+    GET_CURRENCIES
 }
 
 var _code : int
