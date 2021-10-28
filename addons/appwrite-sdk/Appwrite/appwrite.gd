@@ -3,6 +3,7 @@ extends Node
 # Modules
 var account : AppwriteAccount
 var users : AppwriteUsers
+var teams : AppwriteTeams
 var database : AppwriteDatabase
 var storage : AppwriteStorage
 var functions : AppwriteFunctions
@@ -33,14 +34,15 @@ func _ready() -> void:
 func load_modules() -> void:
     account = AppwriteAccount.new()
     users = AppwriteUsers.new()
+    teams = AppwriteTeams.new()
     database = AppwriteDatabase.new()
     storage = AppwriteStorage.new()
     health = AppwriteHealth.new()
     functions = AppwriteFunctions.new()
     
-    
     add_child(account)
     add_child(users)
+    add_child(teams)
     add_child(database)
     add_child(storage)
     add_child(functions)
