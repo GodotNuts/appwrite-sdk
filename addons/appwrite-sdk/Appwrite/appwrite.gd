@@ -7,6 +7,7 @@ var teams : AppwriteTeams
 var database : AppwriteDatabase
 var storage : AppwriteStorage
 var functions : AppwriteFunctions
+var locale : AppwriteLocalization
 var health : AppwriteHealth
 
 
@@ -19,7 +20,8 @@ var headers : Dictionary = {
     "Accept-Type" : "application/json",
     "X-Appwrite-project" : "",
     "X-Appwrite-key" : "",
-    "X-Appwrite-JWT" : ""
+    "X-Appwrite-JWT" : "",
+    "X-Appwrite-Locale" : ""
    }
 var cookies : PoolStringArray = []
 
@@ -38,6 +40,7 @@ func load_modules() -> void:
     database = AppwriteDatabase.new()
     storage = AppwriteStorage.new()
     health = AppwriteHealth.new()
+    locale = AppwriteLocalization.new()
     functions = AppwriteFunctions.new()
     
     add_child(account)
@@ -46,6 +49,7 @@ func load_modules() -> void:
     add_child(database)
     add_child(storage)
     add_child(functions)
+    add_child(locale)
     add_child(health)
     
     
@@ -57,6 +61,10 @@ func set_endpoint(endpoint : String) -> Node:
 
 func set_project(project : String) -> Node:
     self.headers["X-Appwrite-project"] = project
+    return self
+
+func set_locale(locale: String) -> Node:
+    self.headers["X-Appwrite-Locale"] = locale
     return self
 
 # ------ SERVER API
