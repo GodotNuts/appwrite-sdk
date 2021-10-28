@@ -7,9 +7,7 @@ A lightweight addon which integrates Appwrite APIs for Godot Engine out of the b
 
 - [X] Account (client/server)
 - [X] Users (server)
-- [ ] Teams 
-- - [ ] client
-- - [ ] server
+- [X] Teams 
 - [X] Database (client/server)
 - [X] Storage  (client/server)
 - [X] Functions (client/server)
