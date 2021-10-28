@@ -12,9 +12,7 @@ A lightweight addon which integrates Appwrite APIs for Godot Engine out of the b
 - - [ ] server
 - [X] Database (client/server)
 - [X] Storage  (client/server)
-- [ ] Functions 
-- - [ ] client
-- - [ ] server
+- [X] Functions (client/server)
 - [ ] Localization 
 - - [ ] client
 - - [ ] server
