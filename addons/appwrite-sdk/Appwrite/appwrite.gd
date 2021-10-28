@@ -5,6 +5,7 @@ var account : AppwriteAccount
 var users : AppwriteUsers
 var database : AppwriteDatabase
 var storage : AppwriteStorage
+var functions : AppwriteFunctions
 var health : AppwriteHealth
 
 
@@ -35,12 +36,14 @@ func load_modules() -> void:
     database = AppwriteDatabase.new()
     storage = AppwriteStorage.new()
     health = AppwriteHealth.new()
+    functions = AppwriteFunctions.new()
     
     
     add_child(account)
     add_child(users)
     add_child(database)
     add_child(storage)
+    add_child(functions)
     add_child(health)
     
     
