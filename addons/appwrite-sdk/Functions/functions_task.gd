@@ -68,7 +68,7 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
                     complete(result_body, {})
         0, 204:
             match _code:
-                Task.LOGOUT, Task.USER:
+                _:
                     complete()
         _:
             if result_body == null : result_body = {}
