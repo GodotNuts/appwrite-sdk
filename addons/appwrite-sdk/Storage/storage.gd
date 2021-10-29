@@ -30,9 +30,9 @@ func _ready() -> void:
 func __match_resource(type: int, params: Dictionary = {}) -> String:
     var resource : String = ""
     match type:
-        StorageTask.Task.CREATE_FILE, StorageTask.Task.LIST_FILES: resource = _REST_BASE+"/files" + ("?"+params.query if params.has("query") else "")
+        StorageTask.Task.CREATE_FILE, StorageTask.Task.LIST_FILES: resource = _REST_BASE+"/files" + (params.query if params.has("query") else "")
         StorageTask.Task.GET_FILE, StorageTask.Task.UPDATE_FILE, StorageTask.Task.DELETE_FILE: resource = _REST_BASE+"/files/"+params.file_id
-        StorageTask.Task.GET_FILE_PREVIEW: resource = _REST_BASE+"/files/"+params.file_id+"/preview" + ("?"+params.query if params.has("query") else "")
+        StorageTask.Task.GET_FILE_PREVIEW: resource = _REST_BASE+"/files/"+params.file_id+"/preview" + (params.query if params.has("query") else "")
         StorageTask.Task.DOWNLOAD_FILE: resource = _REST_BASE+"/files/"+params.file_id+"/download"
         StorageTask.Task.GET_FILE_VIEW: resource = _REST_BASE+"/files/"+params.file_id+"/view"
     return resource
@@ -104,7 +104,7 @@ func create_file(file_path: String, read: PoolStringArray = [], write: PoolStrin
     return __post(StorageTask.Task.CREATE_FILE, { file = file })
 
 func list_files(search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> StorageTask:
-    var query: String = ""
+    var query: String = "?"
     if search!="": query+="search="+search
     if limit!=0: query+="&limit="+str(limit)
     if offset!=0: query+="&offset="+str(offset)
@@ -115,7 +115,7 @@ func get_file(file_id: String) -> StorageTask:
     return __get(StorageTask.Task.GET_FILE, {file_id = file_id})
 
 func get_file_preview(file_id: String, save_path: String = "", width: int = 0, height: int = 0, gravity: String ="", quality: int = 0, border_width: int = 0, border_color: String = "", border_radius: int = 0, opacity: float = 0, rotation: int = 0, background: String = "", output: String = "") -> StorageTask:
-    var query: String = ""
+    var query: String = "?"
     if width!=0: query+="width="+str(width)
     if height!=0: query+="&height="+str(height)
     if gravity!="": query+="&gravity="+gravity
