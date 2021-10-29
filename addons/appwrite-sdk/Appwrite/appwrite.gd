@@ -8,6 +8,7 @@ var database : AppwriteDatabase
 var storage : AppwriteStorage
 var functions : AppwriteFunctions
 var locale : AppwriteLocalization
+var avatars : AppwriteAvatars
 var health : AppwriteHealth
 
 
@@ -39,9 +40,12 @@ func load_modules() -> void:
     teams = AppwriteTeams.new()
     database = AppwriteDatabase.new()
     storage = AppwriteStorage.new()
-    health = AppwriteHealth.new()
-    locale = AppwriteLocalization.new()
     functions = AppwriteFunctions.new()
+    locale = AppwriteLocalization.new()
+    avatars = AppwriteAvatars.new()
+    health = AppwriteHealth.new()
+
+
     
     add_child(account)
     add_child(users)
@@ -50,6 +54,7 @@ func load_modules() -> void:
     add_child(storage)
     add_child(functions)
     add_child(locale)
+    add_child(avatars)
     add_child(health)
     
     
