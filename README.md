@@ -14,7 +14,5 @@ A lightweight addon which integrates Appwrite APIs for Godot Engine out of the b
 - [X] Localization (client/server)
 - [X] Avatars (client/server)
 - [X] Health (server)
-- [ ] Realtime 
-- - [ ] client
-- - [ ] server
+- [X] Realtime (client)
 
