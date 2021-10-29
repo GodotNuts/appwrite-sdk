@@ -35,13 +35,13 @@ func __match_resource(type: int, params: Dictionary = {}) -> String:
     var resource : String = ""
     match type:    
 		# Client
-        FunctionsTask.Task.CREATE_EXECUTION, FunctionsTask.Task.LIST_EXECUTIONS: resource = _REST_BASE+"/"+params.function_id+"/executions" + ("?"+params.query if params.has("query") else "")
+        FunctionsTask.Task.CREATE_EXECUTION, FunctionsTask.Task.LIST_EXECUTIONS: resource = _REST_BASE+"/"+params.function_id+"/executions" + (params.query if params.has("query") else "")
         FunctionsTask.Task.GET_EXECUTION: resource = _REST_BASE+"/"+params.function_id+"/executions/"+params.execution_id
 		# Server
-		FunctionTask.Task.CREATE, FunctionTask.Task.LIST, FunctionTask.Task.DELETE: resource = _REST_BASE + ("?"+params.query if params.has("query") else "")
+		FunctionTask.Task.CREATE, FunctionTask.Task.LIST, FunctionTask.Task.DELETE: resource = _REST_BASE + (params.query if params.has("query") else "")
 		FunctionTask.Task.GET: resource = _REST_BASE + "/" + params.function_id
 		FunctionTask.Task.UPDATE_TAG: resource = _REST_BASE + "/" + params.function_id + "/tag"
-		FunctionTask.Task.CREATE_TAG, FunctionTask.Task.LIST_TAGS: resource = _REST_BASE + "/" + params.function_id + "/tags" + ("?"+params.query if params.has("query") else "")
+		FunctionTask.Task.CREATE_TAG, FunctionTask.Task.LIST_TAGS: resource = _REST_BASE + "/" + params.function_id + "/tags" + (params.query if params.has("query") else "")
 		FunctionTask.Task.GET_TAG, FunctionTask.Task.DELETE_TAG: resource = _REST_BASE + "/" + params.function_id + "/tags/" + params.tag_id
     return resource
 
@@ -73,7 +73,7 @@ func createExecution(function_id: String, data: Dictionary = {}) -> FunctionTask
 	return __post(FunctionTask.Task.CREATE_EXECUTION, { function_id = function_id, data = data })
 
 func list_executions(function_id: String, search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionTask:
-    var query: String = ""
+    var query: String = "?"
     if search!="": query+="search="+search
     if limit!=0: query+="&limit="+str(limit)
     if offset!=0: query+="&offset="+str(offset)
@@ -88,7 +88,7 @@ func create(name: String, execute: Array, runtime: String, vars: Dictionary = {}
 	return __post(FunctionTask.Task.CREATE, { name = name, execute = execute, runtime = runtime, vars = vars, events = events, schedule = schedule, timeout = timeout })
 
 func list(search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionTask:
-	var query: String = ""
+	var query: String = "?"
     if search!="": query+="search="+search
     if limit!=0: query+="&limit="+str(limit)
     if offset!=0: query+="&offset="+str(offset)
@@ -111,7 +111,7 @@ function create_tag(function_id: String, command: String, code_path: String) -> 
 	return __post(FunctionTask.Task.CREATE_TAG, { command = command, code = code_path }, { function_id = function_id })
 
 func list_tags(function_id: String, search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionsTask:
-    var query: String = ""
+    var query: String = "?"
     if search!="": query+="search="+search
     if limit!=0: query+="&limit="+str(limit)
     if offset!=0: query+="&offset="+str(offset)
