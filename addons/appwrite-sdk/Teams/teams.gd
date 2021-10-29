@@ -31,7 +31,7 @@ func __match_resource(type: int, param: String = "") -> String:
     match type:
         TeamsTask.Task.LIST, TeamsTask.Task.CREATE, TeamsTask.Task.DELETE: resource = _REST_BASE
 		TeamTask.Task.GET, TeamTask.Task.UPDATE, TeamTask.Task.DELETE: resource = _REST_BASE + "/" + params.team_id
-		TeamTask.Task.CREATE_MEMBERSHIP, TeamTask.Task.GET_MEMBERSHIPS: resource = _REST_BASE + "/" + params.team_id + "/memberships" ("?"+params.query if params.has("query") else "")
+		TeamTask.Task.CREATE_MEMBERSHIP, TeamTask.Task.GET_MEMBERSHIPS: resource = _REST_BASE + "/" + params.team_id + "/memberships" + (params.query if params.has("query") else "")
 		TeamTask.Task.UPDATE_MEMBERSHIP_ROLES, TeamTask.Task.UPDATE_MEMBERSHIP_STATUS, TeamTask.Task.DELETE_MEMBERSHIP: resource = _REST_BASE + "/" + params.team_id + "/memberships/" + params.membership_id
     return resource
 
@@ -84,7 +84,7 @@ func update_membership_roles(team_id: String, membership_id: String, roles: Arra
 	return __post(TeamTask.Task.UPDATE_MEMBERSHIP_ROLES, { roles = roles, url = url }, { team_id = team_id, membership_id = membership_id })
 
 func get_memberships(team_id: String, search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> TeamsTask:
-    var query: String = ""
+    var query: String = "?"
     if search!="": query+="search="+search
     if limit!=0: query+="&limit="+str(limit)
     if offset!=0: query+="&offset="+str(offset)
