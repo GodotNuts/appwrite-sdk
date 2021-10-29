@@ -24,7 +24,7 @@ func _ready():
 func __match_resource(type: int, params: Dictionary = {}) -> String:
     var resource : String = ""
     match type:
-        DatabaseTask.Task.CREATE_COLLECTION, DatabaseTask.Task.LIST_COLLECTIONS: resource = _REST_BASE + ("?"+params.query if params.has("query") else "")
+        DatabaseTask.Task.CREATE_COLLECTION, DatabaseTask.Task.LIST_COLLECTIONS: resource = _REST_BASE + (params.query if params.has("query") else "")
         DatabaseTask.Task.GET_COLLECTION, DatabaseTask.Task.UPDATE_COLLECTION, DatabaseTask.Task.DELETE_COLLECTION: resource = _REST_BASE+"/"+params.collection_id
         DatabaseTask.Task.CREATE_DOCUMENT, DatabaseTask.Task.LIST_DOCUMENTS : resource = _REST_BASE+"/"+params.collection_id+"/documents"
         DatabaseTask.Task.GET_DOCUMENT, DatabaseTask.Task.UPDATE_DOCUMENT, DatabaseTask.Task.DELETE_DOCUMENT: resource = _REST_BASE+"/"+params.collection_id+"/documents/"+params.document_id + ("?"+params.query if params.has("query") else "")
@@ -65,7 +65,7 @@ func create_document(
     return __post(DatabaseTask.Task.CREATE_DOCUMENT, payload, { collection_id = collection_id })
 
 func list_documents(collection_id: String, filters: String = "", order_field: String = "", order_type: String = "", order_cast: String = "", search: String = "") -> DatabaseTask:
-    var query: String = ""
+    var query: String = "?"
     if search!="": query+="search="+search
     if filters!="": query+="filters="+filters
     if order_field!="": query+="&orderField="+order_field
@@ -105,7 +105,7 @@ func create_collection(
     return __post(DatabaseTask.Task.CREATE_COLLECTION, payload)
 
 func list_collections(search: String = "", limit: int = 0, offset: int = 0, order_type: String = "") -> DatabaseTask:
-    var query: String = ""
+    var query: String = "?"
     if search!="": query+="search="+search
     if limit!=0: query+="&limit="+str(limit)
     if offset!=0: query+="&offset="+str(offset)
