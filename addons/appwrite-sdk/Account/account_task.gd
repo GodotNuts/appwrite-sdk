@@ -27,7 +27,8 @@ enum Task {
     CREATE_PWD_RECOVERY,
     UPDATE_PWD_RECOVERY,
     CREATE_EMAIL_VERIFICATION,
-    UPDATE_EMAIL_VERIFICATION
+    UPDATE_EMAIL_VERIFICATION,
+    LOGOUT
 }
 
 var _code : int
@@ -71,7 +72,8 @@ func push_request(httprequest : HTTPRequest) -> void:
     _handler.request(_endpoint, _headers, true, _method, to_json(_payload))
 
 func _on_task_completed(result : int, response_code : int, headers : PoolStringArray, body : PoolByteArray) -> void:
-    var result_body : Dictionary = JSON.parse(body.get_string_from_utf8()).result if body.get_string_from_utf8() else {}
+    var validate: String = validate_json(body.get_string_from_utf8())
+    var result_body: Dictionary = parse_json(body.get_string_from_utf8()) if not validate else {error = validate}
     match response_code:
         200:
             match _code:

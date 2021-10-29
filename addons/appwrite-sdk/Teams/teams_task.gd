@@ -5,16 +5,16 @@ signal completed(task_response)
 
 enum Task {
     # Client/Server
-	CREATE,
-	LIST,
-	DELETE,
-	GET,
-	UPDATE,
-	CREATE_MEMBERSHIP,
-	GET_MEMBERSHIP,
-	UPDATE_MEMBERSHIP_ROLES,
-	UPDATE_MEMBERSHIP_STATUS,
-	DELETE_MEMBERSHIP
+    CREATE,
+    LIST,
+    DELETE,
+    GET,
+    UPDATE,
+    CREATE_MEMBERSHIP,
+    GET_MEMBERSHIP,
+    UPDATE_MEMBERSHIP_ROLES,
+    UPDATE_MEMBERSHIP_STATUS,
+    DELETE_MEMBERSHIP
 }
 
 var _code : int
@@ -65,7 +65,7 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
                     complete(result_body, {})
         0, 204:
             match _code:
-				        _:
+                _:
                     complete()
         _:
             if result_body == null : result_body = {}
@@ -74,4 +74,4 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
 func complete(_response : Dictionary = {}, _error : Dictionary = {}) -> void:
     response = _response
     error = _error
-    emit_signal("completed", TaskResponse.new(response, error, cookies))
+    emit_signal("completed", TaskResponse.new(response, error, []))

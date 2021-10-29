@@ -1,4 +1,4 @@
-class_name StorageTask
+class_name AvatarsTask
 extends Reference
 
 signal completed(task_response)
@@ -18,7 +18,6 @@ var _method : int
 var _endpoint : String
 var _headers : PoolStringArray
 var _payload : Dictionary
-var _bytepayload : PoolByteArray
 
 # EXPOSED VARIABLES ---------------------------------------------------------
 var response : Dictionary
@@ -32,7 +31,6 @@ func _init(code : int, endpoint : String, headers : PoolStringArray,  payload : 
     _endpoint = endpoint
     _headers = headers
     _payload = payload
-    _bytepayload = bytepayload
     _method = match_code(code)
 
 func match_code(code : int) -> int:
@@ -42,22 +40,27 @@ func match_code(code : int) -> int:
 func push_request(httprequest : HTTPRequest) -> void:
     _handler = httprequest
     httprequest.connect("request_completed", self, "_on_task_completed")
-    if not _bytepayload.empty():
-        var err = httprequest.request(_endpoint, _headers, true, _method, _bytepayload.get_string_from_ascii())
-    else:
-        httprequest.request(_endpoint, _headers, true, _method, to_json(_payload))
+    httprequest.request(_endpoint, _headers, true, _method, to_json(_payload))
 
 func _on_task_completed(result : int, response_code : int, headers : PoolStringArray, body : PoolByteArray) -> void:
     var validate: String = validate_json(body.get_string_from_utf8())
-    var result_body: Dictionary = parse_json(body.get_string_from_utf8()) if not validate else {error = validate}
+    var result_body: Dictionary = parse_json(body.get_string_from_utf8()).result if not validate else {error = validate}
     if response_code in [200, 201, 204]:
-		var file_name: String = get_header_value("Content-Disposition: ", headers)
-		result_body = { 
-		file_name = file_name.split('"')[1] if file_name!="" else "",
-		file_binary = body,
-		file_text = body.get_string_from_utf8(),
-		file_type = get_header_value("Content-Type: ", headers)
-		}
+        var image: Image = Image.new()
+        var err: int = image.load_png_from_buffer(body)
+        if err == OK:
+            var file_name: String = get_header_value("Content-Disposition: ", headers)
+            var texture: ImageTexture = ImageTexture.new()
+            texture.create_from_image(image)
+            result_body = { 
+            image = image,
+            texture = texture
+            }
+        else:
+            result_body = {
+                message = "Could not load image",
+                code = err
+               }
         complete(result_body)
     else:
         complete({}, result_body)

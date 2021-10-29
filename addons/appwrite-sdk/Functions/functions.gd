@@ -34,15 +34,15 @@ func _ready():
 func __match_resource(type: int, params: Dictionary = {}) -> String:
     var resource : String = ""
     match type:    
-		# Client
+        # Client
         FunctionsTask.Task.CREATE_EXECUTION, FunctionsTask.Task.LIST_EXECUTIONS: resource = _REST_BASE+"/"+params.function_id+"/executions" + (params.query if params.has("query") else "")
         FunctionsTask.Task.GET_EXECUTION: resource = _REST_BASE+"/"+params.function_id+"/executions/"+params.execution_id
-		# Server
-		FunctionTask.Task.CREATE, FunctionTask.Task.LIST, FunctionTask.Task.DELETE: resource = _REST_BASE + (params.query if params.has("query") else "")
-		FunctionTask.Task.GET: resource = _REST_BASE + "/" + params.function_id
-		FunctionTask.Task.UPDATE_TAG: resource = _REST_BASE + "/" + params.function_id + "/tag"
-		FunctionTask.Task.CREATE_TAG, FunctionTask.Task.LIST_TAGS: resource = _REST_BASE + "/" + params.function_id + "/tags" + (params.query if params.has("query") else "")
-		FunctionTask.Task.GET_TAG, FunctionTask.Task.DELETE_TAG: resource = _REST_BASE + "/" + params.function_id + "/tags/" + params.tag_id
+        # Server
+        FunctionsTask.Task.CREATE, FunctionsTask.Task.LIST, FunctionsTask.Task.DELETE: resource = _REST_BASE + (params.query if params.has("query") else "")
+        FunctionsTask.Task.GET: resource = _REST_BASE + "/" + params.function_id
+        FunctionsTask.Task.UPDATE_TAG: resource = _REST_BASE + "/" + params.function_id + "/tag"
+        FunctionsTask.Task.CREATE_TAG, FunctionsTask.Task.LIST_TAGS: resource = _REST_BASE + "/" + params.function_id + "/tags" + (params.query if params.has("query") else "")
+        FunctionsTask.Task.GET_TAG, FunctionsTask.Task.DELETE_TAG: resource = _REST_BASE + "/" + params.function_id + "/tags/" + params.tag_id
     return resource
 
 
@@ -58,10 +58,10 @@ func __get(type : int, params: Dictionary = {}) -> FunctionsTask:
 
 
 # POST, PUT, PATCH base function
-func __post(type: int, payload: Dictionary = {}, params: Dictionary = {}) -> FunctionTask:
-    var function_task : FunctionTask = FunctionTask.new(
+func __post(type: int, payload: Dictionary = {}, params: Dictionary = {}) -> FunctionsTask:
+    var function_task : FunctionsTask = FunctionsTask.new(
         type,
-        get_parent().endpoint + __match_resource(type, param), 
+        get_parent().endpoint + __match_resource(type, params), 
         get_parent()._get_headers(),
         payload
         )
@@ -69,67 +69,67 @@ func __post(type: int, payload: Dictionary = {}, params: Dictionary = {}) -> Fun
     return function_task
 
 # CLIENT (/SERVER) API -----
-func createExecution(function_id: String, data: Dictionary = {}) -> FunctionTask:
-	return __post(FunctionTask.Task.CREATE_EXECUTION, { function_id = function_id, data = data })
+func create_execution(function_id: String, data: Dictionary = {}) -> FunctionsTask:
+    return __post(FunctionsTask.Task.CREATE_EXECUTION, { function_id = function_id, data = data })
 
-func list_executions(function_id: String, search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionTask:
+func list_executions(function_id: String, search: String = "", limit: int = -1, offset: int = -1, order_by: String = "") -> FunctionsTask:
     var query: String = "?"
     if search!="": query+="search="+search
-    if limit!=0: query+="&limit="+str(limit)
-    if offset!=0: query+="&offset="+str(offset)
+    if limit!=-1: query+="&limit="+str(limit)
+    if offset!=-1: query+="&offset="+str(offset)
     if order_by!="": query+="&orderBy="+order_by
-    return __get(FunctionTask.Task.LIST_EXECUTIONS, {function_id = function_id, query = query})
+    return __get(FunctionsTask.Task.LIST_EXECUTIONS, {function_id = function_id, query = query})
 
-func getExecution(function_id: String, execution_id: String) -> FunctionTask:
-	return __get(FunctionTask.Task.GET_EXECUTION, { function_id = function_id , execution_id = execution_id })
+func getExecution(function_id: String, execution_id: String) -> FunctionsTask:
+    return __get(FunctionsTask.Task.GET_EXECUTION, { function_id = function_id , execution_id = execution_id })
 
 # SERVER API -----
-func create(name: String, execute: Array, runtime: String, vars: Dictionary = {}, events: Array = [], schedule: String = "", timeout: int = "") -> FunctionTask:
-	return __post(FunctionTask.Task.CREATE, { name = name, execute = execute, runtime = runtime, vars = vars, events = events, schedule = schedule, timeout = timeout })
+func create(name: String, execute: Array, runtime: String, vars: Dictionary = {}, events: Array = [], schedule: String = "", timeout: int = -1) -> FunctionsTask:
+    return __post(FunctionsTask.Task.CREATE, { name = name, execute = execute, runtime = runtime, vars = vars, events = events, schedule = schedule, timeout = timeout })
 
-func list(search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionTask:
-	var query: String = "?"
-    if search!="": query+="search="+search
-    if limit!=0: query+="&limit="+str(limit)
-    if offset!=0: query+="&offset="+str(offset)
-    if order_by!="": query+="&orderBy="+order_by
-	return __get(FunctionTask.Task.LIST, { query = query }
-
-func get(function_id: String) -> FunctionTask:
-	return __get(FunctionTask.Task.GET, { function_id = function_id })
-
-func update(function_id: String, name: String, execute: Array, vars: Dictionary = {}, events: Array = [], schedule: String = "", timeout: int = "") -> FunctionTask:
-	return __post(FunctionTask.Task.UPDATE, { name = name, execute = execute, runtime = runtime, vars = vars, events = events, schedule = schedule, timeout = timeout }, { function_id = function_id })
-
-func update_tag(function_id: String, tag: String) -> FunctionTask:
-	return __post(FunctionTask.Task.UPDATE_TAG, { tag = tag }, { function_id = function_id })
-
-func delete(function_id: String) -> FunctionTask:
-	return __get(FunctionTask.Task.DELETE, { function_id = function_id })
-
-function create_tag(function_id: String, command: String, code_path: String) -> FunctionTask:
-	return __post(FunctionTask.Task.CREATE_TAG, { command = command, code = code_path }, { function_id = function_id })
-
-func list_tags(function_id: String, search: String = "", limit: int = 0, offset: int = 0, order_by: String = "") -> FunctionsTask:
+func list(search: String = "", limit: int = -1, offset: int = -1, order_by: String = "") -> FunctionsTask:
     var query: String = "?"
     if search!="": query+="search="+search
-    if limit!=0: query+="&limit="+str(limit)
-    if offset!=0: query+="&offset="+str(offset)
+    if limit!=-1: query+="&limit="+str(limit)
+    if offset!=-1: query+="&offset="+str(offset)
+    if order_by!="": query+="&orderBy="+order_by
+    return __get(FunctionsTask.Task.LIST, { query = query })
+
+func get_function(function_id: String) -> FunctionsTask:
+    return __get(FunctionsTask.Task.GET, { function_id = function_id })
+
+func update(function_id: String, name: String, execute: Array, vars: Dictionary = {}, events: Array = [], schedule: String = "", timeout: int = -1) -> FunctionsTask:
+    return __post(FunctionsTask.Task.UPDATE, { name = name, execute = execute, vars = vars, events = events, schedule = schedule, timeout = timeout }, { function_id = function_id })
+
+func update_tag(function_id: String, tag: String) -> FunctionsTask:
+    return __post(FunctionsTask.Task.UPDATE_TAG, { tag = tag }, { function_id = function_id })
+
+func delete(function_id: String) -> FunctionsTask:
+    return __get(FunctionsTask.Task.DELETE, { function_id = function_id })
+
+func create_tag(function_id: String, command: String, code_path: String) -> FunctionsTask:
+    return __post(FunctionsTask.Task.CREATE_TAG, { command = command, code = code_path }, { function_id = function_id })
+
+func list_tags(function_id: String, search: String = "", limit: int = -1, offset: int = -1, order_by: String = "") -> FunctionsTask:
+    var query: String = "?"
+    if search!="": query+="search="+search
+    if limit!=-1: query+="&limit="+str(limit)
+    if offset!=-1: query+="&offset="+str(offset)
     if order_by!="": query+="&orderBy="+order_by
     return __get(FunctionsTask.Task.LIST_TAGS, {function_id = function_id, query = query})
 
 func get_tag(function_id: String, tag_id: String) -> FunctionsTask:
-	return __get(FunctionsTask.Task.GET_TAG, { function_id = function_id, tag_id = tag_id })
+    return __get(FunctionsTask.Task.GET_TAG, { function_id = function_id, tag_id = tag_id })
 
 func delete_tag(function_id: String, tag_id: String) -> FunctionsTask:
-	return __get(FunctionsTask.Task.DELETE_TAG, { function_id = function_id, tag_id = tag_id })
+    return __get(FunctionsTask.Task.DELETE_TAG, { function_id = function_id, tag_id = tag_id })
 
 
 # Process a specific task
 func _process_task(task : FunctionsTask, _fake : bool = false) -> void:
     task.connect("completed", self, "_on_task_completed", [task])
     if _fake:
-        yield(get_tree().create_timer(0.5), "timeout")
+        yield(get_tree().create_timer(-1.5), "timeout")
         task.complete(task.data, task.error)
     else:
         var httprequest : HTTPRequest = HTTPRequest.new()
@@ -143,20 +143,20 @@ func _on_task_completed(task_response: TaskResponse, task: FunctionsTask) -> voi
         var _signal : String = ""
         match task._code:
             # Client
-			FunctionsTask.Task.CREATE_EXECUTION: _signal = "created_execution"
+            FunctionsTask.Task.CREATE_EXECUTION: _signal = "created_execution"
             FunctionsTask.Task.LIST_EXECUTIONS: _signal = "listed_executions"
             FunctionsTask.Task.GET_EXECUTION: _signal = "got_execution"
-			# Server
-			FunctionsTask.Task.CREATE: _signal = "created"
-			FunctionTask.Task.LIST: _signal = "listed"
-			FunctionTask.Task.GET: _signal = "got"
-			FunctionTask.Task.UPDATE: _signal = "updated"
-			FunctionTask.Task.UPDATE_TAG: _signal = "tag_updated"
-			FunctionTask.Task.DELETE: _signal = "deleted"
-			FunctionTask.Task.CREATE_TAG: _signal = "created_tag"
-			FunctionTask.Task.LIST_TAGS: _signal = "listed_tags"
-			FunctionTask.Task.GET_TAG: _signal = "got_tag"
-			FunctionTask.Task.DELETE_TAG: _signal = "deleted_tag"
+            # Server
+            FunctionsTask.Task.CREATE: _signal = "created"
+            FunctionsTask.Task.LIST: _signal = "listed"
+            FunctionsTask.Task.GET: _signal = "got"
+            FunctionsTask.Task.UPDATE: _signal = "updated"
+            FunctionsTask.Task.UPDATE_TAG: _signal = "tag_updated"
+            FunctionsTask.Task.DELETE: _signal = "deleted"
+            FunctionsTask.Task.CREATE_TAG: _signal = "created_tag"
+            FunctionsTask.Task.LIST_TAGS: _signal = "listed_tags"
+            FunctionsTask.Task.GET_TAG: _signal = "got_tag"
+            FunctionsTask.Task.DELETE_TAG: _signal = "deleted_tag"
             _: _signal = "success"
         emit_signal(_signal, task.response)
     else:

@@ -77,4 +77,4 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
 func complete(_response : Dictionary = {}, _error : Dictionary = {}) -> void:
     response = _response
     error = _error
-    emit_signal("completed", TaskResponse.new(response, error, cookies))
+    emit_signal("completed", TaskResponse.new(response, error, []))

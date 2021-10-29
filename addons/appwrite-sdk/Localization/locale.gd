@@ -23,21 +23,21 @@ func _ready():
 
 
 # function builder
-func __match_resource(type: int, param: String = "") -> String:
+func __match_resource(type: int, params: Dictionary = {}) -> String:
     var resource : String = ""
     match type:
-        LocaleTask.Task.GET: _resource = _REST_BASE
-		LocaleTask.Task.GET_COUNTRIES: _resource = _REST_BASE + "/countries"
-		LocaleTask.Task.GET_COUNTRIES_EU: _resource = _REST_BASE + "/countries/eu"
-		LocaleTask.Task.GET_COUNTRIES_PHONES: _resource = _REST_BASE + "/countries/phones"
-		LocaleTask.Task.GET_CONTINENTS: _resource = _REST_BASE + "/continents"
-		LocaleTask.Task.GET_CURRENCIES: _resource = _REST_BASE + "/currencies"
-		LocaleTask.Task.GET_LANGUAGES: _resource = _REST_BASE + "/languages"
-	return resource
+        LocaleTask.Task.GET: resource = _REST_BASE
+        LocaleTask.Task.GET_COUNTRIES: resource = _REST_BASE + "/countries"
+        LocaleTask.Task.GET_COUNTRIES_EU: resource = _REST_BASE + "/countries/eu"
+        LocaleTask.Task.GET_COUNTRIES_PHONES: resource = _REST_BASE + "/countries/phones"
+        LocaleTask.Task.GET_CONTINENTS: resource = _REST_BASE + "/continents"
+        LocaleTask.Task.GET_CURRENCIES: resource = _REST_BASE + "/currencies"
+        LocaleTask.Task.GET_LANGUAGES: resource = _REST_BASE + "/languages"
+    return resource
 
 # GET, DELETE base function
-func __get(type : int, params: Dictionary = {}) -> FunctionsTask:
-    var functions_task : FunctionsTask = FunctionsTask.new(
+func __get(type : int, params: Dictionary = {}) -> LocaleTask:
+    var functions_task : LocaleTask = LocaleTask.new(
         type,
         get_parent().endpoint + __match_resource(type, params), 
         get_parent()._get_headers()
@@ -45,40 +45,27 @@ func __get(type : int, params: Dictionary = {}) -> FunctionsTask:
     _process_task(functions_task)
     return functions_task 
 
-
-# POST, PUT, PATCH base function
-func __post(type: int, payload: Dictionary = {}, params: Dictionary = {}) -> FunctionTask:
-    var locale_task : FunctionTask = FunctionTask.new(
-        type,
-        get_parent().endpoint + __match_resource(type, param), 
-        get_parent()._get_headers(),
-        payload
-        )
-    _process_task(locale_task)
-    return locale_task
-
-
 # -------- CLIENT/SERVER API
 func get_locale() -> LocaleTask:
-	return __get(LocaleTask.Task.GET)
+    return __get(LocaleTask.Task.GET)
 
 func get_countries() -> LocaleTask:
-	return __get(LocaleTask.Task.GET_COUNTRIES)
+    return __get(LocaleTask.Task.GET_COUNTRIES)
 
 func get_countries_eu() -> LocaleTask:
-	return __get(LocaleTask.Task.GET_COUNTRIES_EU)
+    return __get(LocaleTask.Task.GET_COUNTRIES_EU)
 
 func get_countries_phones() -> LocaleTask:
-	return __get(LocaleTask.Task.GET_COUNTRIES_PHONES)
+    return __get(LocaleTask.Task.GET_COUNTRIES_PHONES)
 
 func get_continents() -> LocaleTask:
-	return __get(LocaleTask.Task.GET_CONTINENTS)
+    return __get(LocaleTask.Task.GET_CONTINENTS)
 
 func get_currencies() -> LocaleTask:
-	return __get(LocaleTask.Task.GET_CURRENCIES)
+    return __get(LocaleTask.Task.GET_CURRENCIES)
 
 func get_languages() -> LocaleTask:
-	return __get(LocaleTask.Task.GET_LANGUAGES)
+    return __get(LocaleTask.Task.GET_LANGUAGES)
 
 
 # Process a specific task
@@ -100,11 +87,11 @@ func _on_task_completed(task_response: TaskResponse, task: LocaleTask) -> void:
         match task._code:
             LocaleTask.Task.GET: _signal = "got"
             LocaleTask.Task.GET_COUNTRIES: _signal = "got_countries"
-			LocaleTask.Task.GET_COUNTRIES_EU: _signal = "got_countries_eu"
-			LocaleTask.Task.GET_COUNTRIES_PHONES: _signal = "got_countries_phones"
-			LocaleTask.Task.GET_CONTINENTS: _signal = "got_continents"
-			LocaleTask.Task.GET_CURRENCIES: _signal = "got_currencies"
-			LocaleTask.Task.GET_LANGUAGES: _signal = "got_languages"
+            LocaleTask.Task.GET_COUNTRIES_EU: _signal = "got_countries_eu"
+            LocaleTask.Task.GET_COUNTRIES_PHONES: _signal = "got_countries_phones"
+            LocaleTask.Task.GET_CONTINENTS: _signal = "got_continents"
+            LocaleTask.Task.GET_CURRENCIES: _signal = "got_currencies"
+            LocaleTask.Task.GET_LANGUAGES: _signal = "got_languages"
             _: _signal = "success"
         emit_signal(_signal, task.response)
     else:
