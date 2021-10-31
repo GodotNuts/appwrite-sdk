@@ -43,6 +43,9 @@ func push_request(httprequest : HTTPRequest) -> void:
 	httprequest.request(_endpoint, _headers, true, _method, to_json(_payload))
 
 func _on_task_completed(result : int, response_code : int, headers : PoolStringArray, body : PoolByteArray) -> void:
+	if result > 0: 
+		complete({}, {result = result, message = "HTTP Request Error"})
+		return
 	var validate: String = validate_json(body.get_string_from_utf8())
 	var result_body: Dictionary = parse_json(body.get_string_from_utf8()).result if not validate else {error = validate}
 	if response_code in [200, 201, 204]:
