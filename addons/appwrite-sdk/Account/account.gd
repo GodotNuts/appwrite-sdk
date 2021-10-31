@@ -254,9 +254,4 @@ func _on_task_completed(task_response: TaskResponse, task: AccountTask) -> void:
 
 
 func _fetch_cookies(task : AccountTask) -> void:
-	print(task.cookies)
-	var cookies : Array
-	for cookie in task.cookies:
-		cookies.append("Cookie:%s=%s"%[cookie.keys()[0], cookie.values()[0]])
-	_cookies = PoolStringArray(cookies)
-	get_parent().cookies += _cookies
+	get_parent().cookies = task.cookies

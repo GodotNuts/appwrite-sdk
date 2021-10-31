@@ -83,7 +83,7 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
 		201:
 			match _code:
 				Task.CREATE_SESSION, Task.CREATE_ANONYMOUS_SESSION:
-					get_auth_cookie(headers)
+					get_cookies(headers)
 			complete(result_body, {})
 		0, 204:
 			match _code:
@@ -93,12 +93,10 @@ func _on_task_completed(result : int, response_code : int, headers : PoolStringA
 			if result_body == null : result_body = {}
 			complete({}, result_body)
 
-func get_auth_cookie(cookies : PoolStringArray) -> void:
+func get_cookies(cookies : PoolStringArray) -> void:
 	for cookie in cookies:
 		if cookie.to_lower().begins_with("X-Fallback-Cookies:".to_lower()):
-			var session_cookie: Dictionary = parse_json(cookie.split(":",false,1)[1])
-			session_cookie.values()[0] = session_cookie.values()[0].http_unescape()
-			self.cookies.append(session_cookie)
+			self.cookies.append(cookie)
 			return
 
 func complete(_response : Dictionary = {}, _error : Dictionary = {}) -> void:
