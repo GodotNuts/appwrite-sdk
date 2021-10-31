@@ -45,7 +45,7 @@ func __get(type : int, params: Dictionary = {}) -> StorageTask:
         get_parent().endpoint + __match_resource(type, params), 
         get_parent()._get_headers()
     )
-    _process_task(storage_task, false, {download_file = params.to_path} if params.has("to_path") else {})
+    _process_task(storage_task, true, {download_file = params.to_path} if params.has("to_path") else {})
     return storage_task 
 
     

@@ -57,6 +57,9 @@ func push_request(httprequest : HTTPRequest) -> void:
 	_handler.request(_endpoint, _headers, true, _method, to_json(_payload))
 
 func _on_task_completed(result : int, response_code : int, headers : PoolStringArray, body : PoolByteArray) -> void:
+	if result > 0: 
+		complete({}, {result = result, message = "HTTP Request Error"})
+		return
 	var result_body : Dictionary = JSON.parse(body.get_string_from_utf8()).result if body.get_string_from_utf8() else {}
 	match response_code:
 		200, 201:
