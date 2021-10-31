@@ -3,6 +3,7 @@ addons/*
 !addons/appwrite-sdk
 export/
 scn/
+res/
 project.godot
 icon.png
 *.import
