@@ -12,23 +12,22 @@ var avatars : AppwriteAvatars
 var health : AppwriteHealth
 var realtime : AppwriteRealtime
 
-
 var endpoint: String = "https://appwrite.io/v1"
 var endpoint_realtime: String = ""
+var cookies : PoolStringArray = []
 var headers : Dictionary = {
 	"Content-Type" : "application/json",
 	"X-SDK-Version":"appwrite:gdscript:1.0.0",
 	"X-Appwrite-Response-Format":"0.10.0",
-	"X-Appwrite-project" : "",
-	"X-Appwrite-key" : "",
+	"X-Appwrite-Project" : "",
+	"X-Appwrite-Key" : "",
 	"X-Appwrite-JWT" : "",
-	"X-Appwrite-Locale" : ""
-   }
-var cookies : PoolStringArray = []
+	"X-Appwrite-Locale" : "",
+	"X-Fallback-Cookies" : ""
+	}
 
 func _init() -> void:
 	pass
-	
 
 func _ready() -> void:
 	load_modules()
@@ -56,8 +55,7 @@ func load_modules() -> void:
 	add_child(avatars)
 	add_child(health)
 	add_child(realtime)
-	
-	
+
 
 # ------ CLIENT API
 func set_endpoint(endpoint : String) -> Node:

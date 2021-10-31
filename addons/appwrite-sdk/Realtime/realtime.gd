@@ -20,7 +20,6 @@ func _ready():
 func subscribe(channels: Array) -> bool:
 	var endpoint: String = get_parent().endpoint_realtime
 	var project_param: String = "project=%s&" % get_parent().get_project()
-#    var user_param: String = "user="
 	var channels_param: String = ""
 	subscribed_channels += channels
 	for channel in subscribed_channels: channels_param+="channels[]=%s&" % channel
