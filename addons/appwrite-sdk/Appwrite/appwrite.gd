@@ -17,8 +17,8 @@ var endpoint_realtime: String = ""
 var cookies : PoolStringArray = []
 var headers : Dictionary = {
 	"Content-Type" : "application/json",
-	"X-SDK-Version":"appwrite:gdscript:1.0.0",
-	"X-Appwrite-Response-Format":"0.10.0",
+	"X-SDK-Version":"appwrite:gdscript:1.5.0",
+	"X-Appwrite-Response-Format":"0.11.0",
 	"X-Appwrite-Project" : "",
 	"X-Appwrite-Key" : "",
 	"X-Appwrite-JWT" : "",
